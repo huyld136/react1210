@@ -20,7 +20,7 @@ export default class BaiTapGioHangRedux extends Component {
             <div className="container">
                 <h3 className="text-center">Bài Tập Redux</h3>
                 <div className="gioHang">
-                    <div className="text-right">Gio Hang (0)</div>
+                    <div className="text-center my-3">Gio Hang (0)</div>
                     <GioHangRedux />
                 </div>
                 <div className="row">

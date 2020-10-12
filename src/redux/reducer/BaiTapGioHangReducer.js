@@ -1,20 +1,61 @@
 const stateDefault = {
-    gioHang: {
-        "maSP": 1,
-        "tenSP": "VinSmart Live",
-        "manHinh": "AMOLED, 6.2\", Full HD+",
-        "heDieuHanh": "Android 9.0 (Pie)",
-        "cameraTruoc": "20 MP",
-        "cameraSau": "Chính 48 MP & Phụ 8 MP, 5 MP",
-        "ram": "4 GB",
-        "rom": "64 GB",
-        "giaBan": 5700000,
-        "hinhAnh": "./img/vsphone.jpg"
-    },
+    gioHang: [],
 }
 
 const BaiTapGioHangReducer = (state = stateDefault, action) => {
-    return { ...state }
+
+    switch (action.type) {
+        case 'THEM_GIO_HANG': {
+            //cập nhật lại state
+            let gioHangUpdate = [...state.gioHang];
+
+            //xử lý
+            const index = gioHangUpdate.findIndex(spGH => spGH.maSP === action.spGH.maSP);
+            if (index !== -1) {
+                gioHangUpdate[index].soLuong += 1;
+            } else {
+                gioHangUpdate.push(action.spGH);
+            }
+
+            //gán lại state cũ = giá trị mới
+            state.gioHang = gioHangUpdate;
+            return { ...state };
+            break;
+        }
+        case 'XOA_GIO_HANG': {
+            let gioHangUpdate = [...state.gioHang];
+
+            const index = gioHangUpdate.findIndex(spGH => spGH.maSP === action.maSPClick);
+
+            if (index !== -1) {
+                gioHangUpdate.splice(index, 1);
+            }
+            state.gioHang = gioHangUpdate;
+            return { ...state }
+
+            break;
+        }
+        case 'TANG_GIAM_SL': {
+            let gioHangUpdate = [...state.gioHang];
+            const index = gioHangUpdate.findIndex(sp => sp.maSP === action.maSP);
+
+            if (index !== -1) {
+                if (action.tangGiam) {
+                    gioHangUpdate[index].soLuong += 1;
+                } else {
+                    if (gioHangUpdate[index].soLuong > 1) {
+                        gioHangUpdate[index].soLuong -= 1;
+                    }
+                }
+            }
+            state.gioHang = gioHangUpdate;
+            return { ...state }
+            break;
+        }
+    }
+    return { ...state };
+
+
 }
 
 export default BaiTapGioHangReducer;
