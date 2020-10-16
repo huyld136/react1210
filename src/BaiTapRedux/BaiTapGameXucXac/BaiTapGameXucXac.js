@@ -3,6 +3,15 @@ import DanhSachXucXac from './DanhSachXucXac'
 import KetQuaTroChoi from './KetQuaTroChoi'
 import style from './BaiTapGameXucXac.module.css'
 
+/**
+ * 1 Xây dựng layout - chia component
+ * 2 Xác định state - Tổ chức lưu chữ
+ *  + biến tài xỉu: string
+ *  + mảng xúc xắc [{ma:'',hinhAnh:''},{ma:'',hinhAnh:''},{ma:'',hinhAnh:''}]
+ *  + Tổng số bàn thắng: number
+ *  + Tổng số bàn chơi: number
+ */
+
 export default class BaiTapGameXucXac extends Component {
     render() {
         return (

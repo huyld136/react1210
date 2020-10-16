@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
+import './index.scss';
 import './App.css';
 import DemoStateless from './components/DemoStateless';
 import DemoStatefull from './components/DemoStatefull';
