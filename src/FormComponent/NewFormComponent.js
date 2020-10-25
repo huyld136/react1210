@@ -3,34 +3,20 @@ import swal from 'sweetalert2';
 import { connect } from 'react-redux'
 import { xoaNguoiDungAction } from '../redux/actions/QuanLyNguoiDungActions';
 
-class FormComponent extends Component {
+class NewFormComponent extends Component {
 
-    state = {
-        values: {
-            maNguoiDung: '',
-            tenNguoiDung: '',
-            soDienThoai: '',
-            email: '',
-        },
-        errors: {
-            maNguoiDung: '',
-            tenNguoiDung: '',
-            soDienThoai: '',
-            email: '',
-        },
-        maNguoiDungXoa: '',
-    }
+
 
     handleChangeInput = (event) => {
         //Lay ra name va value
         let { name, value } = event.target;
 
         //tao ra value moi gia tri = value cu
-        let newValues = { ...this.state.values }
+        let newValues = { ...this.props.stateForm.values }
         newValues[name] = value;
 
         // xu ly
-        let newErrors = { ...this.state.errors };
+        let newErrors = { ...this.props.stateForm.errors };
         newErrors[name] = value.trim() === '' ? 'Kho duoc bo trong' : '';
 
         // lay ra attribute types (cac thuoc tinh tren the goi la attribue)
@@ -49,19 +35,28 @@ class FormComponent extends Component {
         };
 
 
-        this.setState({
-            values: newValues, // gan value == value moi
-            errors: newErrors,
-        }, () => {
-            console.log(this.state);
-        });
+        // this.setState({
+        //     values: newValues, // gan value == value moi
+        //     errors: newErrors,
+        // }, () => {
+        //     console.log(this.props.stateForm);
+        // });
+
+        let action = {
+            type: 'HANDLE_CHANGE_INPUT',
+            newState: {
+                values: newValues,
+                errors: newErrors,
+            }
+        }
+        this.props.dispatch(action);
 
 
         // this.setState({
         //     // maNguoiDung = value,
         //     [name]: value,
         // }, () => {
-        //     console.log(this.state);
+        //     console.log(this.props.stateForm);
 
         // });
     }
@@ -72,15 +67,15 @@ class FormComponent extends Component {
 
         let valid = true;
         //dung obj dung for in
-        for (let tenThuocTinh in this.state.values) {
-            if (this.state.values[tenThuocTinh].trim() === '') {
+        for (let tenThuocTinh in this.props.stateForm.values) {
+            if (this.props.stateForm.values[tenThuocTinh].trim() === '') {
                 valid = false;
             }
         }
 
         //duyet loi => tat ca loi phai = rong
-        for (let tenThuocTinh in this.state.errors) {
-            if (this.state.errors[tenThuocTinh].trim() !== '') {
+        for (let tenThuocTinh in this.props.stateForm.errors) {
+            if (this.props.stateForm.errors[tenThuocTinh].trim() !== '') {
                 valid = false;
             }
         }
@@ -101,27 +96,22 @@ class FormComponent extends Component {
             )
         }
 
+        let action = {
+            type: 'THEM_NGUOI_DUNG',
+            nguoiDung: this.props.stateForm.values,
+        }
+        this.props.dispatch(action);
 
 
     }
 
-    // GIAI PHAP 1 SỬ DỤNG LIFECYCLE ComponentWillReceiveprops
-    //Hàm này chạy khi props thay đổi và trước khi render
-    componentWillReceiveProps(newProps) {
-        //Khi bấm nút sửa => props thay đổi ta lấy props từ người dùng chỉnh sửa (this.props.nguoiDungChinhSua)
-        //ta gán vào state của component => và cho render value từ state
-        this.setState({
-            values: newProps.nguoiDungChinhSua
-        })
-
-    }
 
 
 
     //
     render() {
 
-        let { maNguoiDung, tenNguoiDung, soDienThoai, email } = this.state.values;
+        let { maNguoiDung, tenNguoiDung, soDienThoai, email } = this.props.stateForm.values;
 
         return (
             <form className="card" onSubmit={this.handleSubmit} >
@@ -135,28 +125,34 @@ class FormComponent extends Component {
                             <div className="form-group">
                                 <span>Ma Nguoi dung</span>
                                 <input value={maNguoiDung} className="form-control" name="maNguoiDung" onChange={this.handleChangeInput} />
-                                <p className="text-danger">{this.state.errors.maNguoiDung}</p>
+                                <p className="text-danger">{this.props.stateForm.errors.maNguoiDung}</p>
                             </div>
                             <div className="form-group">
                                 <span>Ten Nguoi dung</span>
                                 <input value={tenNguoiDung} className="form-control" name="tenNguoiDung" onChange={this.handleChangeInput} />
-                                <p className="text-danger">{this.state.errors.tenNguoiDung}</p>
+                                <p className="text-danger">{this.props.stateForm.errors.tenNguoiDung}</p>
                             </div>
                         </div>
                         <div className="col-6">
                             <div className="form-group">
                                 <span>So dien thoai</span>
                                 <input types="phoneNumber" value={soDienThoai} className="form-control" name="soDienThoai" onChange={this.handleChangeInput} />
-                                <p className="text-danger">{this.state.errors.soDienThoai}</p>
+                                <p className="text-danger">{this.props.stateForm.errors.soDienThoai}</p>
                             </div>
                             <div className="form-group">
                                 <span>Email</span>
                                 <input types="email" value={email} className="form-control" name="email" onChange={this.handleChangeInput} />
-                                <p className="text-danger">{this.state.errors.email}</p>
+                                <p className="text-danger">{this.props.stateForm.errors.email}</p>
                             </div>
                         </div>
                         <div className="col-12">
                             <button className="btn btn-success">Them Nguoi Dung</button>
+                            <button type="button" onClick={() => {
+                                this.props.dispatch({
+                                    type: 'CAP_NHAT_THONG_TIN',
+                                    nguoiDungCapNhat: this.props.stateForm.values,
+                                });
+                            }} className="btn btn-primary ml-3">Cap nhat thong tin</button>
                         </div>
                         <div className="col-12 mt-3">
                             <input name="maNguoiDungXoa" onChange={(e) => {
@@ -168,9 +164,9 @@ class FormComponent extends Component {
                                 // dispatch mã người dùng lên reducer
                                 // let action = {
                                 //     type: 'XOA_NGUOI_DUNG',
-                                //     maNguoiDung: this.state.maNguoiDungXoa,
+                                //     maNguoiDung: this.props.stateForm.maNguoiDungXoa,
                                 // }
-                                this.props.dispatch(xoaNguoiDungAction(this.state.maNguoiDungXoa));
+                                this.props.dispatch(xoaNguoiDungAction(this.props.stateForm.maNguoiDungXoa));
                             }} className="btn btn-danger mt-3">Xóa</button>
                         </div>
                     </div>
@@ -188,7 +184,8 @@ class FormComponent extends Component {
 let mapStateToProps = state => {
     return {
         nguoiDungChinhSua: state.QuanLyNguoiDungReducer.nguoiDungChinhSua,
+        stateForm: state.QuanLyNguoiDungReducer.stateForm,
     }
 }
 
-export default connect(mapStateToProps)(FormComponent)
+export default connect(mapStateToProps)(NewFormComponent)
